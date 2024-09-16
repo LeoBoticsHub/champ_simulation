@@ -8,13 +8,14 @@ from launch.substitutions import LaunchConfiguration
 
 # Function to generate the launch description
 def generate_launch_description():
-
+    
+    # Chose the robot name for the simulation
+    robot_name = "b1"
+    
     # Package share directories
-    # Get the package share directories for the 'champ_simulation' and 'go1_description' packages.
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
-    robot_description_pkg = launch_ros.substitutions.FindPackageShare(package="go1_description").find("go1_description")
-    # gait_config_pkg = launch_ros.substitutions.FindPackageShare(package="go1_gait").find("go1_gait")                                
-    # Paths to files and directories
+    robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
+
     # Define paths to the robot's URDF, various configuration files, the Gazebo world file, and the launch directory.
     default_model_path = os.path.join(robot_description_pkg, "xacro/robot.xacro")
     world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')
@@ -66,7 +67,7 @@ def generate_launch_description():
     
     declare_robot_name = DeclareLaunchArgument(
         "robot_name", 
-        default_value="/", 
+        default_value=robot_name, 
         description="Robot name"
     )
     
@@ -151,7 +152,7 @@ def generate_launch_description():
     
     declare_robot_name = DeclareLaunchArgument(
         "robot_name", 
-        default_value="go1", 
+        default_value="b1", 
         description="Robot name"
     )
     
@@ -169,7 +170,7 @@ def generate_launch_description():
     
     declare_world_init_z = DeclareLaunchArgument(
         "world_init_z", 
-        default_value="0.40", 
+        default_value="0.9", 
         description="Initial Z position in the Gazebo world"
     )
     

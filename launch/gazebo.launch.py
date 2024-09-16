@@ -8,7 +8,10 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 
 # Function to generate the launch description, which defines all the nodes and commands for launching.
 def generate_launch_description():
-
+    
+    # Chose the robot name for the simulation
+    robot_name = "b1"
+    
     # Find the package directory for "champ_simulation" using ROS 2's package index.
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")
                                 

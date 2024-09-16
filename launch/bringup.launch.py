@@ -8,15 +8,12 @@ from launch.substitutions import Command, LaunchConfiguration
 
 # Function to generate the launch description, which defines all the nodes and parameters for launching.
 def generate_launch_description():
-
+    
+    # Chose the robot name for the simulation
+    robot_name = "b1"
+    
     # Find the package directory for "go1_description" using ROS 2's package index.
-    robot_description_pkg = launch_ros.substitutions.FindPackageShare(
-        package="go1_description"
-    ).find("go1_description")
-
-    # gait_config_pkg = launch_ros.substitutions.FindPackageShare(
-    #     package="go1_gait"
-    # ).find("go1_gait")
+    robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
     
     # Set the default path for the robot's URDF file (in Xacro format).
     default_model_path = os.path.join(robot_description_pkg, "xacro/go1.urdf.xacro")
