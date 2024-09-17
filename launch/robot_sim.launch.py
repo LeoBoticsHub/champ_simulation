@@ -10,7 +10,7 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     
     # Chose the robot name for the simulation
-    robot_name = "b1"
+    robot_name = "leon"
     
     # Package share directories
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
@@ -152,7 +152,7 @@ def generate_launch_description():
     
     declare_robot_name = DeclareLaunchArgument(
         "robot_name", 
-        default_value="b1", 
+        default_value=robot_name, 
         description="Robot name"
     )
     
