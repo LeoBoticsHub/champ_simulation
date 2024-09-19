@@ -16,10 +16,16 @@ def generate_launch_description():
              'joint_group_effort_controller'],
         output='screen'
     )     
-
+    # Load and activate the joint state controller
+    load_joint_state_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'joint_state_broadcaster'],
+        output='screen'
+    )
+    
     # Return the LaunchDescription, which includes the process to load the controller
     return LaunchDescription(
         [
-            load_joint_trajectory_effort_controller
+            load_joint_trajectory_effort_controller,
+            load_joint_state_controller
         ]
     )
