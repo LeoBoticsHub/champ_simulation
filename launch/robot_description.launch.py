@@ -55,9 +55,9 @@ def generate_launch_description():
             name='joint_state_publisher',
             output='screen',
             
-        parameters=[
-            {'use_sim_time': use_sim_time}  # Use simulated time if specified by the "use_sim_time" argument.
-        ],
+            parameters=[
+                {'use_sim_time': use_sim_time}  # Use simulated time if specified by the "use_sim_time" argument.
+            ],
     )
     
     # Return the launch description, which includes all the declared launch arguments and the robot_state_publisher node.
@@ -66,6 +66,6 @@ def generate_launch_description():
             declare_description_path,  # Include the description path launch argument.
             declare_use_sim_time,  # Include the use_sim_time launch argument.
             robot_state_publisher_node,  # Include the robot_state_publisher node in the launch description.
-            joint_state_publisher_node
+            # joint_state_publisher_node
         ]
     )
