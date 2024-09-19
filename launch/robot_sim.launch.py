@@ -10,7 +10,7 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     
     # Chose the robot name for the simulation
-    robot_name = "leon"
+    robot_name = "b1"
     
     # Package share directories
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
@@ -36,7 +36,7 @@ def generate_launch_description():
     
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time", 
-        default_value="false", 
+        default_value="True", 
         description="Use simulation (Gazebo) clock if true"
     )    
 
@@ -73,7 +73,7 @@ def generate_launch_description():
     
     declare_base_link_frame = DeclareLaunchArgument(
         "base_link_frame", 
-        default_value="base_link", 
+        default_value="trunk", 
         description="Base link frame"
     )
     
