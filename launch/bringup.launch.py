@@ -62,7 +62,7 @@ def generate_launch_description():
     )
 
     declare_base_link_frame = DeclareLaunchArgument(
-        "base_link_frame", default_value="base_link", description="Base link frame"
+        "base_link_frame", default_value="trunk", description="Base link frame"
     )
 
     declare_lite = DeclareLaunchArgument(
