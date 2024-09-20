@@ -6,12 +6,20 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
+def extract_base_link_from_yaml(yaml_file):
+    with open(yaml_file, 'r') as file:
+        for line in file:
+            # Look for the 'base' key and extract its value
+            if 'base' in line:
+                base_link = line.split(':')[-1].strip().strip('"')
+                return base_link
+    return None
 # Function to generate the launch description
 def generate_launch_description():
     
     # Chose the robot name for the simulation
     robot_name = "b1"
-    
+                    
     # Package share directories
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
     robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
@@ -26,6 +34,8 @@ def generate_launch_description():
     links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")
     gait_config = os.path.join(robot_description_pkg, "config/gait/gait.yaml")
     gazebo_config = os.path.join(gazebo_pkg, "config/gazebo/gazebo.yaml")
+
+    base_link_frame = extract_base_link_from_yaml(links_config)
 
     # Declare launch arguments for the robot description and simulation time
     declare_description_path = DeclareLaunchArgument(
@@ -73,7 +83,7 @@ def generate_launch_description():
     
     declare_base_link_frame = DeclareLaunchArgument(
         "base_link_frame", 
-        default_value="trunk", 
+        default_value=base_link_frame, 
         description="Base link frame"
     )
     
