@@ -201,7 +201,13 @@ def generate_launch_description():
         default_value=launch_dir, 
         description="Launch directory"
     )    
-   
+
+    declare_sensors_flag = DeclareLaunchArgument(
+        "SENSORS", 
+        default_value="false", 
+        description="Flag use to load sensors"
+    )   
+       
     # Include the robot description launch file
     description_ld = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -260,7 +266,7 @@ def generate_launch_description():
             "world_init_y": LaunchConfiguration("world_init_y"),
             "world_init_z": LaunchConfiguration("world_init_z"),
             "world_init_heading": LaunchConfiguration("world_init_heading"),
-            "gazebo_world": world_file
+            "SENSORS": LaunchConfiguration("SENSORS")
         }.items(),
     )
     
@@ -308,6 +314,8 @@ def generate_launch_description():
             declare_world_init_heading,
             declare_gazebo_config,
             declare_launch_dir,
+            
+            declare_sensors_flag,
             
             description_ld,
             gazebo_ld,
