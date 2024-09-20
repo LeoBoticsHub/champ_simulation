@@ -32,7 +32,7 @@ def generate_launch_description():
     declare_world_init_y = DeclareLaunchArgument("world_init_y", default_value="0.0")  # Initial y-coordinate of the robot in the world.
     declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.30")  # Initial z-coordinate of the robot in the world.
     declare_world_init_heading = DeclareLaunchArgument("world_init_heading", default_value="0.0")  # Initial heading (yaw) of the robot.
-    declare_gazebo_world = DeclareLaunchArgument("world", default_value=world_file, description="Gazebo world name")  # Path to the Gazebo world file.
+    declare_gazebo_world = DeclareLaunchArgument("gazebo_world", default_value=world_file, description="Gazebo world name")  # Path to the Gazebo world file.
     declare_gazebo_config = DeclareLaunchArgument("gazebo_config", default_value=gazebo_config, description="Gazebo config file path")  # Path to the Gazebo configuration file.
     
     # Launch configuration variables (these will be set by launch arguments).
@@ -42,7 +42,7 @@ def generate_launch_description():
     world_init_y = LaunchConfiguration("world_init_y")
     world_init_z = LaunchConfiguration("world_init_z")
     world_init_heading = LaunchConfiguration("world_init_heading")
-    gazebo_world = LaunchConfiguration("world")
+    gazebo_world = LaunchConfiguration("gazebo_world")
     gazebo_config = LaunchConfiguration("gazebo_config")
 
     # Start the Gazebo client (GUI) if not running in headless mode.
