@@ -26,7 +26,7 @@ def generate_launch_description():
 
     # Define paths to the robot's URDF, various configuration files, the Gazebo world file, and the launch directory.
     default_model_path = os.path.join(robot_description_pkg, "xacro/robot.xacro")
-    world_file = os.path.join(gazebo_pkg, 'worlds', 'playground.world')
+    world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')
     launch_dir = os.path.join(gazebo_pkg, "launch")
     
     # Paths to specific configuration files
