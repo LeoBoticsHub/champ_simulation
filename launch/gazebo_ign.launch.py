@@ -5,7 +5,11 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, PathJoinSubstitution
+from ament_index_python.packages import get_package_share_directory
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
     
@@ -79,6 +83,22 @@ def generate_launch_description():
         output="screen"  # Output logs to the screen.
     )
 
+    pkg_ros_gz_sim = get_package_share_directory(
+        'ros_gz_sim')
+
+    gz_sim_launch = PathJoinSubstitution(
+        [pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py'])
+    
+        
+    # Ignition processes
+    ign_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([gz_sim_launch]),
+        launch_arguments=[
+            ('gz_args', [ign_world,
+                         ' -v 4'])
+        ]
+    )
+    
     # Command to spawn the robot entity in the Ignition simulation.
     start_ign_spawner_cmd = Node(
         package="ros_gz_sim",  # Package that provides the spawn_entity service in Ignition.
@@ -104,12 +124,15 @@ def generate_launch_description():
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock",  # Bridge between ROS 2 and Ignition Clock topics.
             '/world/default/model/robot/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model',  # Example joint state bridge.
-            '/lidar/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
+            '/lidar_points/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked',  # Correct remap here
+            # "/lidar_points@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan",
             "--ros-args",
             "--log-level",
             "warn",
         ],
-        parameters=[{"use_sim_time": True}],  # Use simulated time from Ignition.
+        parameters=[
+            {"use_sim_time": True},
+        ],  # Use simulated time from Ignition.
     )
 
     # Return the launch description, which includes all declared launch arguments and the commands to start Ignition and spawn the robot.
@@ -124,6 +147,7 @@ def generate_launch_description():
             declare_world_init_heading,
             # declare_ign_config,
             start_ign_server_cmd,
+            # ign_sim,
             # start_ign_client_cmd,
             start_ign_spawner_cmd,
             ros_gz_bridge
