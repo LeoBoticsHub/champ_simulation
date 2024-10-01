@@ -54,12 +54,12 @@
               <size>100 100</size>
             </plane>
           </geometry>
-          <material>
+          <!-- <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
               <name>Gazebo/Grey</name>
             </script>
-          </material>
+          </material> -->
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
