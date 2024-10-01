@@ -125,6 +125,7 @@ def generate_launch_description():
             "/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock",  # Bridge between ROS 2 and Ignition Clock topics.
             '/world/default/model/robot/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model',  # Example joint state bridge.
             '/lidar_points/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked',  # Correct remap here
+            '/imu/data@sensor_msgs/msg/Imu@ignition.msgs.IMU',
             # "/lidar_points@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan",
             "--ros-args",
             "--log-level",
