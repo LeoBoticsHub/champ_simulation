@@ -126,6 +126,11 @@ def generate_launch_description():
             '/world/default/model/robot/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model',  # Example joint state bridge.
             '/lidar_points/points@sensor_msgs/msg/PointCloud2@ignition.msgs.PointCloudPacked',  # Correct remap here
             '/imu/data@sensor_msgs/msg/Imu@ignition.msgs.IMU',
+            '/world/default/model/b1/link/FL_calf/sensor/FL_foot_contact/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+            '/world/default/model/b1/link/FR_calf/sensor/FR_foot_contact/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+            '/world/default/model/b1/link/RL_calf/sensor/RL_foot_contact/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+            '/world/default/model/b1/link/RR_calf/sensor/RR_foot_contact/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+
             # "/lidar_points@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan",
             "--ros-args",
             "--log-level",
