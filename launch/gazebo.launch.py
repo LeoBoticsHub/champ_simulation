@@ -14,10 +14,12 @@ def generate_launch_description():
     
     # Find the package directory for "champ_simulation" using ROS 2's package index.
     gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")
+    robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
                                 
     # Define paths for the world file and launch directory.
     world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')  # Path to the default Gazebo world file.
     launch_dir = os.path.join(gazebo_pkg, "launch")  # Path to the launch directory of the "champ_simulation" package.
+    links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")
 
     # Define the path to the Gazebo configuration file.
     gazebo_config = os.path.join(
@@ -86,7 +88,15 @@ def generate_launch_description():
             "-Y", world_init_heading,  # Initial yaw (heading).
         ]
     )
-    
+
+    contact_sensor = Node(
+        package="champ_gazebo",
+        executable="contact_sensor",
+        output="screen",
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},links_config],
+        # prefix=['xterm -e gdb -ex run --args'],
+    )
+        
     # Return the launch description, which includes all declared launch arguments and the commands to start Gazebo and spawn the robot.
     return LaunchDescription(
         [
@@ -100,6 +110,7 @@ def generate_launch_description():
             declare_gazebo_config,
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
-            start_gazebo_spawner_cmd
+            start_gazebo_spawner_cmd,
+            contact_sensor
         ]
     )
