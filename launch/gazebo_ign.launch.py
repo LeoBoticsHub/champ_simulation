@@ -18,10 +18,12 @@ def generate_launch_description():
     
     # Find the package directory for "champ_simulation" using ROS 2's package index.
     ign_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")
-                                
+    robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
+    
     # Define paths for the world file and launch directory.
     world_file = os.path.join(ign_pkg, 'worlds', 'default_ign.world')  # Path to the default Ignition world file.
     launch_dir = os.path.join(ign_pkg, "launch")  # Path to the launch directory of the "champ_simulation" package.
+    links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")                                
 
     # Define the path to the Ignition configuration file.
     # ign_config = os.path.join(
@@ -88,8 +90,7 @@ def generate_launch_description():
 
     gz_sim_launch = PathJoinSubstitution(
         [pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py'])
-    
-        
+            
     # Ignition processes
     ign_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([gz_sim_launch]),
@@ -141,6 +142,13 @@ def generate_launch_description():
         ],  # Use simulated time from Ignition.
     )
 
+    contact_sensor = Node(
+        package="champ_gazebo",
+        executable="contact_sensor_ignition",
+        output="screen",
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},links_config],
+        # prefix=['xterm -e gdb -ex run --args'],
+    )
     # Return the launch description, which includes all declared launch arguments and the commands to start Ignition and spawn the robot.
     return LaunchDescription(
         [
@@ -156,6 +164,7 @@ def generate_launch_description():
             # ign_sim,
             # start_ign_client_cmd,
             start_ign_spawner_cmd,
-            ros_gz_bridge
+            ros_gz_bridge,
+            contact_sensor
         ]
     )
