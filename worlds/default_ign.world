@@ -68,13 +68,13 @@
       </link>
     </model>
 
-    <model name='slope'>
+    <!-- <model name='slope'>
       <static>1</static>
       <link name='link'>
         <collision name='collision'>
           <geometry>
             <box>
-              <size>5.0 5.0 0.1</size> <!-- Length, width, height of the slope -->
+              <size>5.0 5.0 0.1</size>
             </box>
           </geometry>
           <surface>
@@ -98,7 +98,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>5.0 5.0 0.1</size> <!-- Same size as the collision -->
+              <size>5.0 5.0 0.1</size>
             </box>
           </geometry>
         </visual>
@@ -106,8 +106,8 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
       </link>
-      <pose>1 0 0 0 -0.1745 0</pose> <!-- Incline the box by 10 degrees in pitch (0.1745 radians) -->
-    </model>
+      <pose>1 0 0 0 -0.1745 0</pose>
+    </model> -->
 
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
