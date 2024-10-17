@@ -78,3 +78,8 @@ or
 #### 2.1.2 Run RVIZ 2 visualization:
 
     ros2 launch b1_description b1_rviz_champ.launch.py  
+
+## Authors
+
+The package is provided by:
+- [Giuseppe Alfonso](https://github.com/GiuseppeAlfonso) [Mantainer]
