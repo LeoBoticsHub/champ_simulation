@@ -2,7 +2,7 @@ import os
 import launch_ros
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -223,64 +223,118 @@ def generate_launch_description():
         }.items(),
     )
     
-    # Include the bringup launch file
-    bringup_ld = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("champ_simulation"),
-                "launch",
-                "bringup.launch.py",
-            )
-        ),
-        launch_arguments={
-            "description_path": default_model_path,
-            "joints_map_path": joints_config,
-            "links_map_path": links_config,
-            "gait_config_path": gait_config,
-            "use_sim_time": LaunchConfiguration("use_sim_time"),
-            "robot_name": LaunchConfiguration("robot_name"),
-            "gazebo": "true",
-            "lite": LaunchConfiguration("lite"),
-            "rviz": LaunchConfiguration("rviz"),
-            "joint_controller_topic": "joint_group_effort_controller/joint_trajectory",
-            "hardware_connected": "false",
-            "publish_foot_contacts": "false",
-            "close_loop_odom": "true",
-        }.items(),
-    )
+    # # Include the bringup launch file
+    # bringup_ld = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(
+    #             get_package_share_directory("champ_simulation"),
+    #             "launch",
+    #             "bringup.launch.py",
+    #         )
+    #     ),
+    #     launch_arguments={
+    #         "description_path": default_model_path,
+    #         "joints_map_path": joints_config,
+    #         "links_map_path": links_config,
+    #         "gait_config_path": gait_config,
+    #         "use_sim_time": LaunchConfiguration("use_sim_time"),
+    #         "robot_name": LaunchConfiguration("robot_name"),
+    #         "gazebo": "true",
+    #         "lite": LaunchConfiguration("lite"),
+    #         "rviz": LaunchConfiguration("rviz"),
+    #         "joint_controller_topic": "joint_group_effort_controller/joint_trajectory",
+    #         "hardware_connected": "false",
+    #         "publish_foot_contacts": "false",
+    #         "close_loop_odom": "true",
+    #     }.items(),
+    # )
     
+    delay_duration = 5.0  # Delay in seconds
+        
     # Include the Gazebo launch file
-    gazebo_ld = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("champ_simulation"),
-                "launch",
-                "gazebo.launch.py",
+    gazebo_ld = TimerAction(
+        period=delay_duration/2,
+        actions=[
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        get_package_share_directory("champ_simulation"),
+                        "launch",
+                        "gazebo.launch.py",
+                    )
+                ),
+                launch_arguments={
+                    "headless": LaunchConfiguration("headless"),
+                    "gazebo_world": LaunchConfiguration("gazebo_world"),
+                    "robot_name": LaunchConfiguration("robot_name"),
+                    "world_init_x": LaunchConfiguration("world_init_x"),
+                    "world_init_y": LaunchConfiguration("world_init_y"),
+                    "world_init_z": LaunchConfiguration("world_init_z"),
+                    "world_init_heading": LaunchConfiguration("world_init_heading"),
+                    "SENSORS": LaunchConfiguration("SENSORS")
+                }.items(),
             )
-        ),
-        launch_arguments={
-            "headless": LaunchConfiguration("headless"),
-            "gazebo_world": LaunchConfiguration("gazebo_world"),
-            "robot_name": LaunchConfiguration("robot_name"),
-            "world_init_x": LaunchConfiguration("world_init_x"),
-            "world_init_y": LaunchConfiguration("world_init_y"),
-            "world_init_z": LaunchConfiguration("world_init_z"),
-            "world_init_heading": LaunchConfiguration("world_init_heading"),
-            "SENSORS": LaunchConfiguration("SENSORS")
-        }.items(),
-    )
-    
-    # Include the ros2_control launch file
-    ros2_control_ld = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("champ_simulation"),
-                "launch",
-                "ros2_control.launch.py",
-            )
-        )
+        ]
     )    
+    # # Include the ros2_control launch file
+    # ros2_control_ld = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(
+    #             get_package_share_directory("champ_simulation"),
+    #             "launch",
+    #             "ros2_control.launch.py",
+    #         )
+    #     )
+    # )
+        
+    # Timer action to delay starting the ros2_control and bringup launch files
 
+    # Include the ros2_control launch file after a delay
+    ros2_control_ld = TimerAction(
+        period=4*delay_duration,  # Delay for 'delay_duration' seconds
+        actions=[
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        get_package_share_directory("champ_simulation"),
+                        "launch",
+                        "ros2_control.launch.py",
+                    )
+                )
+            )
+        ]
+    )
+
+    # Include the bringup launch file after a delay
+    bringup_ld = TimerAction(
+        period=6*delay_duration,  # Delay for 'delay_duration' seconds
+        actions=[
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        get_package_share_directory("champ_simulation"),
+                        "launch",
+                        "bringup.launch.py",
+                    )
+                ),
+                launch_arguments={
+                    "description_path": default_model_path,
+                    "joints_map_path": joints_config,
+                    "links_map_path": links_config,
+                    "gait_config_path": gait_config,
+                    "use_sim_time": LaunchConfiguration("use_sim_time"),
+                    "robot_name": LaunchConfiguration("robot_name"),
+                    "gazebo": "true",
+                    "lite": LaunchConfiguration("lite"),
+                    "rviz": LaunchConfiguration("rviz"),
+                    "joint_controller_topic": "joint_group_effort_controller/joint_trajectory",
+                    "hardware_connected": "false",
+                    "publish_foot_contacts": "false",
+                    "close_loop_odom": "true",
+                }.items(),
+            )
+        ]
+    )
     # Return the LaunchDescription, including all declared launch arguments and included launch files
     return LaunchDescription(
         [

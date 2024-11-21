@@ -6,37 +6,48 @@ from launch.actions import DeclareLaunchArgument,ExecuteProcess
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 
-# Function to generate the launch description, which defines all the nodes and commands for launching.
+def extract_base_link_from_yaml(yaml_file):
+    with open(yaml_file, 'r') as file:
+        for line in file:
+            # Look for the 'base' key and extract its value
+            if 'base' in line:
+                base_link = line.split(':')[-1].strip().strip('"')
+                return base_link
+    return None
+# Function to generate the launch description
 def generate_launch_description():
     
     # Chose the robot name for the simulation
-    robot_name = "b1"
-    
-    # Find the package directory for "champ_simulation" using ROS 2's package index.
-    gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")
+    robot_name = "go1"
+                    
+    # Package share directories
+    gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
     robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
-                                
-    # Define paths for the world file and launch directory.
-    world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')  # Path to the default Gazebo world file.
-    launch_dir = os.path.join(gazebo_pkg, "launch")  # Path to the launch directory of the "champ_simulation" package.
-    links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")
 
-    # Define the path to the Gazebo configuration file.
-    gazebo_config = os.path.join(
-        launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation"),
-        "config/gazebo/gazebo.yaml"
-    )
+    # Define paths to the robot's URDF, various configuration files, the Gazebo world file, and the launch directory.
+    default_model_path = os.path.join(robot_description_pkg, "xacro/robot.xacro")
+    world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')
+    launch_dir = os.path.join(gazebo_pkg, "launch")
+    
+    # Paths to specific configuration files
+    joints_config = os.path.join(robot_description_pkg, "config/joints/joints.yaml")
+    links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")
+    gait_config = os.path.join(robot_description_pkg, "config/gait/gait.yaml")
+    gazebo_config = os.path.join(gazebo_pkg, "config/gazebo/gazebo.yaml")
+
+    base_link_frame = extract_base_link_from_yaml(links_config)
 
     # Declare launch arguments with default values and descriptions.
-    declare_robot_name = DeclareLaunchArgument("robot_name", default_value="go1")  # Name of the robot to be spawned.
+    declare_robot_name = DeclareLaunchArgument("robot_name", default_value=robot_name)  # Name of the robot to be spawned.
     declare_headless = DeclareLaunchArgument("headless", default_value="False")  # Whether to run Gazebo in headless mode (without GUI).
     declare_world_init_x = DeclareLaunchArgument("world_init_x", default_value="0.0")  # Initial x-coordinate of the robot in the world.
     declare_world_init_y = DeclareLaunchArgument("world_init_y", default_value="0.0")  # Initial y-coordinate of the robot in the world.
-    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.30")  # Initial z-coordinate of the robot in the world.
+    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.20")  # Initial z-coordinate of the robot in the world.
     declare_world_init_heading = DeclareLaunchArgument("world_init_heading", default_value="0.0")  # Initial heading (yaw) of the robot.
     declare_gazebo_world = DeclareLaunchArgument("gazebo_world", default_value=world_file, description="Gazebo world name")  # Path to the Gazebo world file.
     declare_gazebo_config = DeclareLaunchArgument("gazebo_config", default_value=gazebo_config, description="Gazebo config file path")  # Path to the Gazebo configuration file.
-    
+    declare_use_sim_time = DeclareLaunchArgument("use_sim_time", default_value="True", description="Use simulation (Gazebo) clock if true")
+        
     # Launch configuration variables (these will be set by launch arguments).
     robot_name = LaunchConfiguration("robot_name")
     headless = LaunchConfiguration("headless")
@@ -108,6 +119,7 @@ def generate_launch_description():
             declare_world_init_z,
             declare_world_init_heading,
             declare_gazebo_config,
+            declare_use_sim_time,
             start_gazebo_server_cmd,
             start_gazebo_client_cmd,
             start_gazebo_spawner_cmd,

@@ -6,22 +6,41 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command, LaunchConfiguration
 
-# Function to generate the launch description, which defines all the nodes and parameters for launching.
+def extract_base_link_from_yaml(yaml_file):
+    with open(yaml_file, 'r') as file:
+        for line in file:
+            # Look for the 'base' key and extract its value
+            if 'base' in line:
+                base_link = line.split(':')[-1].strip().strip('"')
+                return base_link
+    return None
+# Function to generate the launch description
 def generate_launch_description():
     
     # Chose the robot name for the simulation
-    robot_name = "b1"
-    
-    # Find the package directory for "go1_description" using ROS 2's package index.
+    robot_name = "go1"
+                    
+    # Package share directories
+    gazebo_pkg = launch_ros.substitutions.FindPackageShare(package="champ_simulation").find("champ_simulation")    
     robot_description_pkg = launch_ros.substitutions.FindPackageShare(package= robot_name + "_description").find(robot_name + "_description")
+
+    # Define paths to the robot's URDF, various configuration files, the Gazebo world file, and the launch directory.
+    default_model_path = os.path.join(robot_description_pkg, "xacro/robot.xacro")
+    world_file = os.path.join(gazebo_pkg, 'worlds', 'default.world')
+    launch_dir = os.path.join(gazebo_pkg, "launch")
     
-    # Set the default path for the robot's URDF file (in Xacro format).
-    default_model_path = os.path.join(robot_description_pkg, "xacro/go1.urdf.xacro")
+    # Paths to specific configuration files
+    joints_config = os.path.join(robot_description_pkg, "config/joints/joints.yaml")
+    links_config = os.path.join(robot_description_pkg, "config/links/links.yaml")
+    gait_config = os.path.join(robot_description_pkg, "config/gait/gait.yaml")
+    gazebo_config = os.path.join(gazebo_pkg, "config/gazebo/gazebo.yaml")
+
+    base_link_frame = extract_base_link_from_yaml(links_config)
 
     # Declare launch arguments, which can be overridden when launching the file.
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time",
-        default_value="false",
+        default_value="true",
         description="Use simulation (Gazebo) clock if true",
     )
 
@@ -33,19 +52,19 @@ def generate_launch_description():
 
     declare_joints_map_path = DeclareLaunchArgument(
         name="joints_map_path",
-        default_value='',
+        default_value=joints_config,
         description="Absolute path to joints map file",
     )
 
     declare_links_map_path = DeclareLaunchArgument(
         name="links_map_path",
-        default_value='',
+        default_value=links_config,
         description="Absolute path to links map file",
     )
 
     declare_gait_config_path = DeclareLaunchArgument(
         name="gait_config_path",
-        default_value='',
+        default_value=gait_config,
         description="Absolute path to gait config file",
     )
 
@@ -62,7 +81,7 @@ def generate_launch_description():
     )
 
     declare_base_link_frame = DeclareLaunchArgument(
-        "base_link_frame", default_value="trunk", description="Base link frame"
+        "base_link_frame", default_value=base_link_frame, description="Base link frame"
     )
 
     declare_lite = DeclareLaunchArgument(
